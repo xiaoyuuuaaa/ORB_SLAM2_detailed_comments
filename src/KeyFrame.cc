@@ -199,7 +199,7 @@ void KeyFrame::UpdateBestCovisibles()
     vPairs.reserve(mConnectedKeyFrameWeights.size());
     // 取出所有连接的关键帧，mConnectedKeyFrameWeights的类型为std::map<KeyFrame*,int>，而vPairs变量将共视的地图点数放在前面，利于排序
     for(map<KeyFrame*,int>::iterator mit=mConnectedKeyFrameWeights.begin(), mend=mConnectedKeyFrameWeights.end(); mit!=mend; mit++)
-       vPairs.push_back(make_pair(mit->second,mit->first));
+       vPairs.push_back(make_pair(mit->second,mit->first)); //map<KeyFrame*,int>中权重在后，放到vector的时候换个顺序，便于排序
 
     // 按照权重进行排序（默认是从小到大）
     sort(vPairs.begin(),vPairs.end());
@@ -274,15 +274,16 @@ vector<KeyFrame*> KeyFrame::GetCovisiblesByWeight(const int &w)
 
     // http://www.cplusplus.com/reference/algorithm/upper_bound/
     // 从mvOrderedWeights找出第一个大于w的那个迭代器
+    // upper_bound()用于在一个已排序的范围内查找一个值的位置，找到的是第一个大于给定值的位置。
     vector<int>::iterator it = upper_bound( mvOrderedWeights.begin(),   //起点
                                             mvOrderedWeights.end(),     //终点
                                             w,                          //目标阈值
-                                            KeyFrame::weightComp);      //比较函数从大到小排序
+                                            KeyFrame::weightComp);      //比较函数 从大到小排序
     
     // 如果没有找到，说明最大的权重也比给定的阈值小，返回空
     if(it==mvOrderedWeights.end() && *mvOrderedWeights.rbegin()<w)
         return vector<KeyFrame*>();
-    else
+    else 
     {
         // 如果存在，返回满足要求的关键帧
         int n = it-mvOrderedWeights.begin();
@@ -501,7 +502,7 @@ void KeyFrame::UpdateConnections()
 
     //  Step 4 对满足共视程度的关键帧对更新连接关系及权重（从大到小）
     // vPairs里存的都是相互共视程度比较高的关键帧和共视权重，接下来由大到小进行排序
-    sort(vPairs.begin(),vPairs.end());         // sort函数默认升序排列
+    sort(vPairs.begin(),vPairs.end());         // sort函数默认升序排列(前面为了方便这里的排序，pair<int,KeyFrame*>，权重在前)
     // 将排序后的结果分别组织成为两种数据类型
     list<KeyFrame*> lKFs;
     list<int> lWs;
@@ -695,7 +696,7 @@ void KeyFrame::SetBadFlag()
                     continue;
 
                 // Check if a parent candidate is connected to the keyframe
-                // Step 4.2 子关键帧遍历每一个与它共视的关键帧    
+                // Step 4.2 子关键帧遍历每一个与它**共视的关键帧**    
                 vector<KeyFrame*> vpConnected = pKF->GetVectorCovisibleKeyFrames();
 
                 for(size_t i=0, iend=vpConnected.size(); i<iend; i++)
@@ -704,13 +705,13 @@ void KeyFrame::SetBadFlag()
                     for(set<KeyFrame*>::iterator spcit=sParentCandidates.begin(), spcend=sParentCandidates.end(); spcit!=spcend; spcit++)
                     {
                         // Step 4.3 如果孩子和sParentCandidates中有共视，选择共视最强的那个作为新的父
-                        if(vpConnected[i]->mnId == (*spcit)->mnId)
+                        if(vpConnected[i]->mnId == (*spcit)->mnId) // vpConnected(共视帧)与sParentCandidates中相同的元素
                         {
                             int w = pKF->GetWeight(vpConnected[i]);
                             // 寻找并更新权值最大的那个共视关系
                             if(w>max)
                             {
-                                pC = pKF;                   //子关键帧
+                                pC = pKF;                   //子关键帧(相同元素中和pKF权重最大的子关键帧)
                                 pP = vpConnected[i];        //目前和子关键帧具有最大权值的关键帧（将来的父关键帧） 
                                 max = w;                    //这个最大的权值
                                 bContinue = true;           //说明子节点找到了可以作为其新父关键帧的帧
