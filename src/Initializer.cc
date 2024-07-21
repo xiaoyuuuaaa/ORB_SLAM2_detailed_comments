@@ -1420,7 +1420,7 @@ void Initializer::Triangulate(
 
 /**
  * @brief 归一化特征点到同一尺度，作为后续normalize DLT的输入
- *  [x' y' 1]' = T * [x y 1]' 
+ *  [x' y' 1]' = T * [x y 1]'  归一化后坐标=归一化矩阵T*原特征点齐次坐标
  *  归一化后x', y'的均值为0，sum(abs(x_i'-0))=1，sum(abs((y_i'-0))=1
  *
  *  为什么要归一化？
@@ -1483,7 +1483,7 @@ void Initializer::Normalize(const vector<cv::KeyPoint> &vKeys, vector<cv::Point2
     // 求出平均到每个点上，其坐标偏离横纵坐标均值的程度；将其倒数作为一个尺度缩放因子
     meanDevX = meanDevX/N;
     meanDevY = meanDevY/N;
-    float sX = 1.0/meanDevX;
+    float sX = 1.0/meanDevX; // 尺度缩放因子（一会儿分配的时候直接乘这个因子）
     float sY = 1.0/meanDevY;
 
     // Step 3 将x坐标和y坐标分别进行尺度归一化，使得x坐标和y坐标的一阶绝对矩分别为1 
