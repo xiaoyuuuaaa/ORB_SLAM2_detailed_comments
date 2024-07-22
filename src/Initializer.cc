@@ -671,10 +671,10 @@ float Initializer::CheckHomography(
 
         // Step 2.2 计算 img2 到 img1 的重投影误差
         // x1 = H12*x2
-        // 将图像2中的特征点通过单应变换投影到图像1中
-        // |u1|   |h11inv h12inv h13inv||u2|   |u2in1|
-        // |v1| = |h21inv h22inv h23inv||v2| = |v2in1| * w2in1inv
-        // |1 |   |h31inv h32inv h33inv||1 |   |  1  |
+        // 将图像2中的特征点通过单应变换投影到图像1中 (??)
+        // |u1|   |h11inv h12inv h13inv||u2|   		  |u2in1|
+        // |v1| = |h21inv h22inv h23inv||v2| * w2in1inv = |v2in1| 
+        // |1 |   |h31inv h32inv h33inv||1 |   		  |  1  |
 		// 计算投影归一化坐标
         const float w2in1inv = 1.0/(h31inv * u2 + h32inv * v2 + h33inv);
         const float u2in1 = (h11inv * u2 + h12inv * v2 + h13inv) * w2in1inv;
