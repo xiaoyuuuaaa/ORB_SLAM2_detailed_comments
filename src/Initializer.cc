@@ -554,7 +554,9 @@ cv::Mat Initializer::ComputeF21(
     // 定义输出变量，u是左边的正交矩阵U， w为奇异矩阵，vt中的t表示是右正交矩阵V的转置
     cv::SVDecomp(A,w,u,vt,cv::SVD::MODIFY_A | cv::SVD::FULL_UV);
 	// 转换成基础矩阵的形式
-    cv::Mat Fpre = vt.row(8).reshape(0, 3); // v的最后一列
+    cv::Mat Fpre = vt.row(8).reshape(0, 3); // v的最后一列 
+	// reshape第一个参数 0 表示自动计算这一维的大小，以保持总元素数量不变。
+	// 第二个参数 3 指定了目标矩阵的行数。
 
     //基础矩阵的秩为2,而我们不敢保证计算得到的这个结果的秩为2,所以需要通过第二次奇异值分解,来强制使其秩为2
     // 对初步得来的基础矩阵进行第2次奇异值分解
