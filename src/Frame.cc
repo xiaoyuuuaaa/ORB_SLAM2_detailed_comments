@@ -1045,6 +1045,8 @@ void Frame::ComputeStereoMatches()
             
             // 根据亚像素精度偏移量delta调整最佳匹配索引
             float bestuR = mvScaleFactors[kpL.octave]*((float)scaleduR0+(float)bestincR+deltaR);
+		// mvScaleFactors[kpL.octave]为对应金字塔层级的尺度因子；scaleduR0(scaled uR 0) 是经过尺度缩放后的初始索引值; 
+		// bestincR(best increment) 是最佳匹配索引的增量; deltaR 是亚像素级别的调整量，它表示进一步的偏移量，用于提高匹配的精度。
             float disparity = (uL-bestuR);
             if(disparity>=minD && disparity<maxD) {
                 // 如果存在负视差，则约束为0.01
@@ -1074,7 +1076,7 @@ void Frame::ComputeStereoMatches()
         if(vDistIdx[i].first<thDist)
             break;
         else {
-			// 误匹配点置为-1，和初始化时保持一直，作为error code
+			// 误匹配点置为-1，和初始化时保持一致，作为error code
             mvuRight[vDistIdx[i].second]=-1;
             mvDepth[vDistIdx[i].second]=-1;
         }
