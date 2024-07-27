@@ -208,7 +208,8 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
     for(list<pair<float,KeyFrame*> >::iterator it=lScoreAndMatch.begin(), itend=lScoreAndMatch.end(); it!=itend; it++)
     {
         KeyFrame* pKFi = it->second;
-        vector<KeyFrame*> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10);
+        // 返回的关键帧列表中将包含10个最佳共视关键帧
+        vector<KeyFrame*> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10); // Neighbors临近的、共视的关键帧
 
         float bestScore = it->first; // 该组最高分数
         float accScore = it->first;  // 该组累计得分
@@ -240,7 +241,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
     // 所有组中最高得分的0.75倍，作为最低阈值
     float minScoreToRetain = 0.75f*bestAccScore;
 
-    set<KeyFrame*> spAlreadyAddedKF;
+    set<KeyFrame*> spAlreadyAddedKF; // std::set是C++ STL中的一种关联容器，自动排序且不允许重复元素。它基于红黑树实现，提供对元素的快速查找、插入和删除操作。
     vector<KeyFrame*> vpLoopCandidates;
     vpLoopCandidates.reserve(lAccScoreAndMatch.size());
 
