@@ -337,7 +337,7 @@ void LocalMapping::CreateNewMapPoints()
     // Step 2：遍历相邻关键帧，搜索匹配并用极线约束剔除误匹配，最终三角化
     for(size_t i=0; i<vpNeighKFs.size(); i++)
     {
-        // ! 疑似bug，正确应该是 if(i>0 && !CheckNewKeyFrames())
+        // 下面的过程比较耗费时间，如果有新的关键帧需要处理，就暂时退出。
         if(i>0 && CheckNewKeyFrames())
             return;
 
